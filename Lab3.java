@@ -10,9 +10,7 @@ public class Lab3 {
     }
 
     private static void createGUI() {
-        JFrame frame = new JFrame("******* points");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 300); //needs to be deleted after packing
-        frame.setVisible(true);
+        JFrame frame = new MyFrame(); //incapsulation
+        frame.setVisible(true); //ought to control visibility from main class
     }
 }
