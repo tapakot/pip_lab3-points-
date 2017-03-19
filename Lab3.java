@@ -10,7 +10,7 @@ public class Lab3 {
     }
 
     private static void createGUI() {
-        JFrame frame = new MyFrame(); //incapsulation
+        JFrame frame = new MyFrame(); //encapsulation
         frame.setVisible(true); //ought to control visibility from main class
     }
 }

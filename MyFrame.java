@@ -13,7 +13,8 @@ public class MyFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel mainPanel = new JPanel(new GridLayout(1, 2, 0, 0));
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        super.setMinimumSize(new Dimension(400, 150));
+        super.setMinimumSize(new Dimension(850, 450));
+        super.setPreferredSize(getMinimumSize());
 
         Box mainBox = Box.createVerticalBox();
         Box box1 = Box.createHorizontalBox();
@@ -83,6 +84,7 @@ public class MyFrame extends JFrame {
         mainBox.add(Box.createVerticalGlue());
 
         mainPanel.add(mainBox);
+        mainPanel.add(new MyCanvas());
 
         setContentPane(mainPanel);
         pack();
