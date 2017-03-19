@@ -52,9 +52,9 @@ public class MyCanvas extends JPanel {
         g2d.drawString("R", width/2 + 7, height/2 - radY + 5);
         g2d.drawLine(width/2 - 5, height/2 - radY/2, width/2 + 5, height/2 - radY/2);
         g2d.drawString("R/2", width/2 + 7, height/2 - radY/2 + 5);
-        g2d.drawLine(width/2 - 5, height/2 + radY/2, width/2 + 5, height/2 + radY/2);        g2d.drawString("R", width/2 + 7, height/2 - radY + 5);
+        g2d.drawLine(width/2 - 5, height/2 + radY/2, width/2 + 5, height/2 + radY/2);
         g2d.drawString("-R/2", width/2 + 7, height/2 + radY/2 + 5);
-        g2d.drawLine(width/2 - 5, height/2 + radY, width/2 + 5, height/2 + radY);        g2d.drawString("R", width/2 + 7, height/2 - radY + 5);
+        g2d.drawLine(width/2 - 5, height/2 + radY, width/2 + 5, height/2 + radY); 
         g2d.drawString("-R", width/2 + 7, height/2 + radY + 5);
         g2d.drawString("Y", width/2 + 7, 20);
 
