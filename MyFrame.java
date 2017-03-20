@@ -84,11 +84,19 @@ public class MyFrame extends JFrame {
         mainBox.add(Box.createVerticalGlue());
 
         mainPanel.add(mainBox);
-        mainPanel.add(new MyCanvas());
+        MyCanvas myCanvas = new MyCanvas();
+        myCanvas.setVisible(true);
+        mainPanel.add(myCanvas);
+
+        myCanvas.addPoint(0, 0, 5);
+        myCanvas.addPoint(1,5,5);
+
 
         setContentPane(mainPanel);
         pack();
     }
+
+
 
     class MouseL extends MouseAdapter{
         public void mouseClicked(MouseEvent event){

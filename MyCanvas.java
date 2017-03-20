@@ -1,20 +1,30 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 
 
 public class MyCanvas extends JPanel {
+    int height; //height of the visible canvas
+    int width;
+    int radX; //used only to paint figures
+    int radY;
+    double radUser;
+    Point2D.Double points[] = new Point2D.Double[100];
+    int countOfPoints = 0;
 
     public MyCanvas(){
         setPreferredSize(new Dimension(100, 100));
+        super.setVisible(true);
     }
 
     @Override
     protected void paintComponent(Graphics g){
+        height = getHeight()-10; //height of the visible canvas
+        width = getWidth()-10;
+        radX = width/3; //used only to paint figures
+        radY = height/3;
+        Point realPoints[] = new Point[100];
         Graphics2D g2d = (Graphics2D)g;
-        int height = getHeight()-10; //height of the visible canvas
-        int width = getWidth()-10;
-        int radX = width/3; //used only to paint figures
-        int radY = height/3;
 
         super.paintComponent(g2d);
         this.setBackground(Color.green);
@@ -60,5 +70,26 @@ public class MyCanvas extends JPanel {
 
         //mark 0
         g2d.drawString("0", width/2 + 7, height/2 + 15);
+
+        //points
+        g2d.setColor(Color.red);
+        for(int i =0; i<countOfPoints; i++){
+            realPoints[i] = getRealCoordinates(points[i], 5);
+            g2d.fillRect(width/2 + realPoints[i].x - 1, height/2 - realPoints[i].y - 1, 3, 3);
+        }
+    }
+
+    void addPoint(double x, double y, double r){
+        radUser = r;
+        points[countOfPoints] = new Point2D.Double(x, y);
+        countOfPoints++;
+        this.revalidate();
+        this.repaint();
+    }
+
+    Point getRealCoordinates(Point2D point, double r){      //big error because of float to int
+        int rx = (int)(point.getX()*radX/r);
+        int ry = (int)(point.getY()*radY/r);
+        return new Point(rx, ry);
     }
 }
