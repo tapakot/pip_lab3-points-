@@ -4,7 +4,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 
-
 public class MyCanvas extends JPanel implements MouseListener {
     int height; //height of the visible canvas
     int width;
@@ -16,11 +15,17 @@ public class MyCanvas extends JPanel implements MouseListener {
     int countOfPoints = 0;
     JTextField lastPoint;
     Graphics2D g2d;
-    //res Point istead of x,y
+    Point aniPoint;
+    int aniPointR= 50;
+    int pointR = 3;
+    volatile boolean aniMode;
+    //res Point instead of x,y
 
     public MyCanvas(double r, JTextField text){
         radUser = r;
         lastPoint = text;
+        //aniMode = new ThreadLocal<>();
+        aniMode = false;
         addMouseListener(this);
         setPreferredSize(new Dimension(100, 100));
         super.setVisible(true);
@@ -81,10 +86,26 @@ public class MyCanvas extends JPanel implements MouseListener {
         g2d.drawString("0", width/2 + 7, height/2 + 15);
 
         //points
-        g2d.setColor(Color.red);
         for(int i =0; i<countOfPoints; i++){
+            boolean inFigure = false;
             realPoints[i] = getRealCoordinatesFromFields(userPoints[i], radUser);
+            double x = userPoints[i].x;
+            double y = userPoints[i].y;
+            if((x < 0)&&(y<=0)&&(x>(-radUser/2))&&(y>-radUser)) { inFigure = true; }
+            if((x < 0)&&(y>0)&&(y < x+radUser)) { inFigure = true; } //y=x+R
+            if((x > 0)&&(y>0)&&(x*x + y*y < radUser*radUser)){ inFigure = true; }
+            if(inFigure){
+                g2d.setColor(Color.orange);
+            }else{
+                g2d.setColor(Color.red);
+            }
             g2d.fillRect(width/2 + realPoints[i].x - 1, height/2 - realPoints[i].y - 1, 3, 3);
+        }
+
+        if (aniMode) {
+            g2d.setColor(Color.red);
+            g2d.fillRect(width/2 + aniPoint.x - aniPointR/2,height/2 - aniPoint.y -aniPointR/2, aniPointR, aniPointR);
+            aniMode = false;
         }
     }
 
@@ -95,8 +116,12 @@ public class MyCanvas extends JPanel implements MouseListener {
         if((userX > 0)&&(userY>0)&&(userX*userX + userY*userY < radUser*radUser)){ inFigure = true; }
         if(!inFigure){
             Point aniPoint = getRealCoordinatesFromFields(new Point2D.Double(userX, userY), radUser);
-            AnimatedPoint animation = new AnimatedPoint(this, aniPoint, radX, radY);
-            Thread aniThread = new Thread(animation);
+
+            Thread aniThread = new Thread(new Runnable(){
+                public void run(){
+                    animation(aniPoint);
+                }
+            });
             aniThread.start();
         }
         userPoints[countOfPoints] = new Point2D.Double(userX, userY);
@@ -131,11 +156,17 @@ public class MyCanvas extends JPanel implements MouseListener {
         this.repaint();
     }
 
-    public void animation(){
-        g2d.fillRect(0,0,100,100);
-        this.paintImmediately(100,100,100,100);
-        repaint();
-
+    public synchronized void  animation(Point aniPoint){
+        this.aniPoint = aniPoint;
+        aniPointR=50;
+        while (aniPointR>pointR) {
+            aniMode = true;
+            repaint();
+            aniPointR-=1;
+            try{Thread.sleep(20);}
+            catch (InterruptedException e){}
+        }
+        aniMode = false;
     }
 
     @Override
