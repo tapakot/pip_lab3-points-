@@ -1,19 +1,26 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 
 
-public class MyCanvas extends JPanel {
+public class MyCanvas extends JPanel implements MouseListener {
     int height; //height of the visible canvas
     int width;
     int radX; //used only to paint figures
     int radY;
     double radUser;
-    Point2D.Double points[] = new Point2D.Double[100];
+    Point2D.Double userPoints[] = new Point2D.Double[100];
+    Point realPoints[];
     int countOfPoints = 0;
+    JTextField lastPoint;
+    //res Point istead of x,y
 
-    public MyCanvas(double r){
+    public MyCanvas(double r, JTextField text){
         radUser = r;
+        lastPoint = text;
+        addMouseListener(this);
         setPreferredSize(new Dimension(100, 100));
         super.setVisible(true);
     }
@@ -24,7 +31,7 @@ public class MyCanvas extends JPanel {
         width = getWidth()-10;
         radX = width/3; //used only to paint figures
         radY = height/3;
-        Point realPoints[] = new Point[100];
+        realPoints = new Point[100];
         Graphics2D g2d = (Graphics2D)g;
 
         super.paintComponent(g2d);
@@ -75,27 +82,65 @@ public class MyCanvas extends JPanel {
         //points
         g2d.setColor(Color.red);
         for(int i =0; i<countOfPoints; i++){
-            realPoints[i] = getRealCoordinates(points[i], radUser);
+            realPoints[i] = getRealCoordinatesFromFields(userPoints[i], radUser);
             g2d.fillRect(width/2 + realPoints[i].x - 1, height/2 - realPoints[i].y - 1, 3, 3);
         }
     }
 
     void addPoint(double x, double y){
-        points[countOfPoints] = new Point2D.Double(x, y);
+        userPoints[countOfPoints] = new Point2D.Double(x, y);
         countOfPoints++;
+        lastPoint.setText(String.format("x = %.2f; y = %.2f.", x, y));
         this.revalidate();
         this.repaint();
     }
 
-    Point getRealCoordinates(Point2D point, double r){      //big error because of float to int
-        int rx = (int)(point.getX()*radX/r);
-        int ry = (int)(point.getY()*radY/r);
+    Point getRealCoordinatesFromFields(Point2D point, double radUser){      //big error because of float to int
+        int rx = (int)(point.getX()*radX/radUser);
+        int ry = (int)(point.getY()*radY/radUser);
         return new Point(rx, ry);
+    }
+
+    Point getRealCoordinatesFromMouse(Point point){
+        int realX = point.x - width/2;
+        int realY = height/2 - point.y;
+        return new Point(realX, realY);
+
+    }
+
+    Point2D.Double getUserCoordinates(Point point, double radUser){
+        double xUser = point.x * radUser / radX;
+        double yUser = point.y * radUser / radY;
+        return new Point2D.Double(xUser, yUser);
     }
 
     void sliderEvent(JSlider source){
         radUser = source.getValue();
         this.revalidate();
         this.repaint();
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e){}
+
+    @Override
+    public void mouseExited(MouseEvent e){}
+
+    @Override
+    public void mousePressed(MouseEvent e){}
+
+    @Override
+    public void mouseReleased(MouseEvent e){}
+
+    @Override
+    public void mouseClicked(MouseEvent e){
+        int x = e.getX();
+        int y = e.getY();
+        realPoints[countOfPoints] = getRealCoordinatesFromMouse(new Point(x, y));
+        Point2D.Double userPoint = getUserCoordinates(realPoints[countOfPoints], radUser);
+        addPoint(userPoint.x, userPoint.y);
+        /*System.out.println("on canvas: "+x+ " " + y);
+        System.out.println("user: "+ userPoints[countOfPoints-1].x+" "+userPoints[countOfPoints-1].y);
+        System.out.println("real: "+ realPoints[countOfPoints-1].x+" " + realPoints[countOfPoints-1].y);*/
     }
 }

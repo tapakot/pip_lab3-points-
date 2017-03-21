@@ -16,7 +16,7 @@ public class MyFrame extends JFrame implements ChangeListener,  ActionListener, 
     JButton addButton;
     JList list;
     ButtonGroup bg;
-    JTextField text;
+    JTextField lastPoint;
     double yValue = 0;
     JRadioButton rbtn1;
     JRadioButton rbtn2;
@@ -84,13 +84,13 @@ public class MyFrame extends JFrame implements ChangeListener,  ActionListener, 
         box3.add(Box.createHorizontalGlue());
 
         JLabel label4 = new JLabel("last point:");
-        text = new JTextField();
-        text.setPreferredSize(new Dimension(300,20));
-        text.setMaximumSize(new Dimension(300, 20));
+        lastPoint = new JTextField();
+        lastPoint.setPreferredSize(new Dimension(300,20));
+        lastPoint.setMaximumSize(new Dimension(300, 20));
         box4.add(Box.createHorizontalGlue());
         box4.add(label4);
         box4.add(Box.createHorizontalGlue());
-        box4.add(text);
+        box4.add(lastPoint);
         box4.add(Box.createHorizontalGlue());
 
         addButton = new JButton("Add");
@@ -109,13 +109,13 @@ public class MyFrame extends JFrame implements ChangeListener,  ActionListener, 
         mainBox.add(Box.createVerticalGlue());
 
         mainPanel.add(mainBox);
-        myCanvas = new MyCanvas(rad);
+        myCanvas = new MyCanvas(rad, lastPoint);
         myCanvas.setVisible(true);
         mainPanel.add(myCanvas);
 
-        myCanvas.addPoint(0, 0);
+        /*myCanvas.addPoint(0, 0);
         myCanvas.addPoint(1,5);
-        myCanvas.addPoint(4, 2);
+        myCanvas.addPoint(4, 2);*/
 
         setContentPane(mainPanel);
         pack();
