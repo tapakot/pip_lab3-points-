@@ -15,6 +15,7 @@ public class MyCanvas extends JPanel implements MouseListener {
     Point realPoints[];
     int countOfPoints = 0;
     JTextField lastPoint;
+    Graphics2D g2d;
     //res Point istead of x,y
 
     public MyCanvas(double r, JTextField text){
@@ -32,7 +33,7 @@ public class MyCanvas extends JPanel implements MouseListener {
         radX = width/3; //used only to paint figures
         radY = height/3;
         realPoints = new Point[100];
-        Graphics2D g2d = (Graphics2D)g;
+        g2d = (Graphics2D)g;
 
         super.paintComponent(g2d);
         this.setBackground(Color.green);
@@ -87,10 +88,20 @@ public class MyCanvas extends JPanel implements MouseListener {
         }
     }
 
-    void addPoint(double x, double y){
-        userPoints[countOfPoints] = new Point2D.Double(x, y);
+    void addPoint(double userX, double userY){
+        boolean inFigure = false;
+        if((userX < 0)&&(userY<=0)&&(userX>(-radUser/2))&&(userY>-radUser)) { inFigure = true; }
+        if((userX < 0)&&(userY>0)&&(userY < userX+radUser)) { inFigure = true; } //y=x+R
+        if((userX > 0)&&(userY>0)&&(userX*userX + userY*userY < radUser*radUser)){ inFigure = true; }
+        if(!inFigure){
+            Point aniPoint = getRealCoordinatesFromFields(new Point2D.Double(userX, userY), radUser);
+            AnimatedPoint animation = new AnimatedPoint(this, aniPoint, radX, radY);
+            Thread aniThread = new Thread(animation);
+            aniThread.start();
+        }
+        userPoints[countOfPoints] = new Point2D.Double(userX, userY);
         countOfPoints++;
-        lastPoint.setText(String.format("x = %.2f; y = %.2f.", x, y));
+        lastPoint.setText(String.format("x = %.2f; y = %.2f.", userX, userY));
         this.revalidate();
         this.repaint();
     }
@@ -118,6 +129,13 @@ public class MyCanvas extends JPanel implements MouseListener {
         radUser = source.getValue();
         this.revalidate();
         this.repaint();
+    }
+
+    public void animation(){
+        g2d.fillRect(0,0,100,100);
+        this.paintImmediately(100,100,100,100);
+        repaint();
+
     }
 
     @Override
