@@ -12,7 +12,8 @@ public class MyCanvas extends JPanel {
     Point2D.Double points[] = new Point2D.Double[100];
     int countOfPoints = 0;
 
-    public MyCanvas(){
+    public MyCanvas(double r){
+        radUser = r;
         setPreferredSize(new Dimension(100, 100));
         super.setVisible(true);
     }
@@ -74,13 +75,12 @@ public class MyCanvas extends JPanel {
         //points
         g2d.setColor(Color.red);
         for(int i =0; i<countOfPoints; i++){
-            realPoints[i] = getRealCoordinates(points[i], 5);
+            realPoints[i] = getRealCoordinates(points[i], radUser);
             g2d.fillRect(width/2 + realPoints[i].x - 1, height/2 - realPoints[i].y - 1, 3, 3);
         }
     }
 
-    void addPoint(double x, double y, double r){
-        radUser = r;
+    void addPoint(double x, double y){
         points[countOfPoints] = new Point2D.Double(x, y);
         countOfPoints++;
         this.revalidate();
@@ -91,5 +91,11 @@ public class MyCanvas extends JPanel {
         int rx = (int)(point.getX()*radX/r);
         int ry = (int)(point.getY()*radY/r);
         return new Point(rx, ry);
+    }
+
+    void sliderEvent(JSlider source){
+        radUser = source.getValue();
+        this.revalidate();
+        this.repaint();
     }
 }
