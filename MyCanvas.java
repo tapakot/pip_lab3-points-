@@ -116,12 +116,13 @@ public class MyCanvas extends JPanel implements MouseListener {
         if((userX > 0)&&(userY>0)&&(userX*userX + userY*userY < radUser*radUser)){ inFigure = true; }
         if(!inFigure){
             Point aniPoint = getRealCoordinatesFromFields(new Point2D.Double(userX, userY), radUser);
-
-            Thread aniThread = new Thread(new Runnable(){
+            /*Thread aniThread = new Thread(new Runnable(){
                 public void run(){
                     animation(aniPoint);
                 }
-            });
+            });*/
+            AnimatedPoint myAniPoint = new AnimatedPoint(this, aniPoint);
+            Thread aniThread = new Thread(myAniPoint);
             aniThread.start();
         }
         userPoints[countOfPoints] = new Point2D.Double(userX, userY);
